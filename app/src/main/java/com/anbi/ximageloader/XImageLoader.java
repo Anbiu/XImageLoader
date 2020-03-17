@@ -58,10 +58,13 @@ public class XImageLoader {
         mExecutorService.submit(new Runnable() {
             @Override
             public void run() {
+                System.out.println("读取缓存");
                 Bitmap bitmap = mImageCache.get(url);
                 //缓存中没有图片 从网络中下载
                 if (bitmap == null) {
+                    System.out.println("开始下载");
                     bitmap = downloadImage(url);
+                    System.out.println("下载结束");
                 }
                 //没有下载到图片
                 if (bitmap == null) {
