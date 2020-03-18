@@ -1,3 +1,20 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <string name="app_name">XImageLoader</string>
+
+    <!--权限-->
+    <string-array name="permissions">
+        <item android:name="android.permission.CAMERA" />
+        <item android:name="android.permission.ACCESS_FINE_LOCATION" />
+        <item android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        <item android:name="android.permission.CALL_PHONE" />
+        <item android:name="android.permission.SEND_SMS" />
+        <item android:name="android.permission.READ_SMS" />
+
+        <item android:name="android.permission.GET_ACCOUNTS" />
+        <item android:name="android.permission.READ_PHONE_STATE" />
+        <item android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        <item android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        <item android:name="android.permission.RECORD_AUDIO" />
+
+    </string-array>
 </resources>

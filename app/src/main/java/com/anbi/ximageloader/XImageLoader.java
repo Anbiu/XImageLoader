@@ -4,13 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.LruCache;
 import android.widget.ImageView;
 
+import com.anbi.ximageloader.cache.ImageCache;
 import com.anbi.ximageloader.cache.MemoryCache;
 
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,14 +20,18 @@ import java.util.concurrent.Executors;
  * @time: 2020-03-17 18:33
  */
 public class XImageLoader {
-    //图片缓存
-    private MemoryCache mImageCache = new MemoryCache();
+    //图片缓存 默认是内存缓存
+    private ImageCache mImageCache = new MemoryCache();
     //线程池
     private ExecutorService mExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     //UI Handler
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
+    //注入缓存实现
+    public void setmImageCache(ImageCache mImageCache) {
+        this.mImageCache = mImageCache;
+    }
 
     /**
      * 加载图片
@@ -39,10 +42,19 @@ public class XImageLoader {
     public void displayImage(final String url, final ImageView imageView) {
         Bitmap bitmap = mImageCache.get(url);
         if (bitmap != null) {
-            System.out.println("读取缓存");
             imageView.setImageBitmap(bitmap);
             return;
         }
+        //图片没有缓存，提交到线程池中下载
+        submitLoadRequese(url,imageView);
+    }
+
+    /**
+     * 线程下载图片并显示
+     * @param url
+     * @param imageView
+     */
+    private void submitLoadRequese(final String url, final ImageView imageView) {
         imageView.setTag(url);
         mExecutorService.submit(new Runnable() {
             @Override

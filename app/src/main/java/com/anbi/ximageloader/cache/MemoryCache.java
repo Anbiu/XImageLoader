@@ -9,7 +9,7 @@ import android.util.LruCache;
  * @author: anbi
  * @time: 2020-03-18 15:50
  */
-public class MemoryCache {
+public class MemoryCache implements ImageCache{
 
     //图片缓存
     private LruCache<String, Bitmap> mImageCache;
@@ -44,6 +44,7 @@ public class MemoryCache {
     }
 
     public Bitmap get(String url) {
+        System.out.println("读取缓存");
        return mImageCache.get(url);
     }
 }

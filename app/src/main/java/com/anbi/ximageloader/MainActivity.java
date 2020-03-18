@@ -6,17 +6,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.anbi.ximageloader.cache.DiskCache;
+import com.anbi.ximageloader.cache.DoubleCache;
+
 public class MainActivity extends AppCompatActivity {
     ImageView mImageView;
-    XImageLoader xImageLoader;
+    XImageLoader mXImageLoader;
     String[] strings = new String[]{
-            "http://dpic.tiankong.com/02/d6/QJ7100013424.jpg?x-oss-process=style/show_794s",
-            "http://dpic.tiankong.com/t2/d6/QJ7100013431.jpg?x-oss-process=style/show_794s",
-            "http://dpic.tiankong.com/6w/d6/QJ7100013443.jpg?x-oss-process=style/240h",
-            "http://dpic.tiankong.com/zw/d6/QJ7100013453.jpg?x-oss-process=style/240h",
-            "http://dpic.tiankong.com/9w/d6/QJ7100013460.jpg?x-oss-process=style/240h",
-            "http://dpic.tiankong.com/xw/d6/QJ7100013470.jpg?x-oss-process=style/240h",
-            "http://dpic.tiankong.com/ij/d6/QJ7100013482.jpg?x-oss-process=style/240h"
+            "http://dpic.tiankong.com/02/d6/QJ7100013424.jpg",
+            "http://dpic.tiankong.com/t2/d6/QJ7100013431.jpg",
+            "http://dpic.tiankong.com/6w/d6/QJ7100013443.jpg",
+            "http://dpic.tiankong.com/zw/d6/QJ7100013453.jpg",
+            "http://dpic.tiankong.com/9w/d6/QJ7100013460.jpg",
+            "http://dpic.tiankong.com/xw/d6/QJ7100013470.jpg",
+            "http://dpic.tiankong.com/ij/d6/QJ7100013482.jpg"
     };
 
     @Override
@@ -24,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mImageView = findViewById(R.id.mImageView);
-        xImageLoader = new XImageLoader();
-        xImageLoader.displayImage(strings[getUrl()], mImageView);
+        mXImageLoader = new XImageLoader();
+        mXImageLoader.setmImageCache(new DoubleCache(this));
+        mXImageLoader.displayImage(strings[getUrl()], mImageView);
     }
 
     private int getUrl() {
@@ -36,6 +40,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refresh(View view) {
-        xImageLoader.displayImage(strings[getUrl()], mImageView);
+        mXImageLoader.displayImage(strings[getUrl()], mImageView);
     }
 }
