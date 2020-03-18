@@ -7,6 +7,8 @@ import android.os.Looper;
 import android.util.LruCache;
 import android.widget.ImageView;
 
+import com.anbi.ximageloader.cache.MemoryCache;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,59 +22,42 @@ import java.util.concurrent.Executors;
  */
 public class XImageLoader {
     //图片缓存
-   private LruCache<String, Bitmap> mImageCache;
+    private MemoryCache mImageCache = new MemoryCache();
     //线程池
     private ExecutorService mExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     //UI Handler
-   private Handler mHandler = new Handler(Looper.getMainLooper());
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    public XImageLoader() {
-        initXImageLoader();
-    }
-
-    /**
-     * 初始化
-     */
-    private void initXImageLoader() {
-        //计算可使用的最大内存
-        int maxMermory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        //使用1/8作为图片缓存
-        int cacheSize = maxMermory / 8;
-        mImageCache = new LruCache<String, Bitmap>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                //计算单个元素所用内存
-                return value.getRowBytes() * value.getHeight() / 1024;
-            }
-        };
-    }
 
     /**
      * 加载图片
-     * @param url 图片地址
+     *
+     * @param url       图片地址
      * @param imageView 图片控件
      */
     public void displayImage(final String url, final ImageView imageView) {
+        Bitmap bitmap = mImageCache.get(url);
+        if (bitmap != null) {
+            System.out.println("读取缓存");
+            imageView.setImageBitmap(bitmap);
+            return;
+        }
         imageView.setTag(url);
         mExecutorService.submit(new Runnable() {
             @Override
             public void run() {
-                System.out.println("读取缓存");
-                Bitmap bitmap = mImageCache.get(url);
                 //缓存中没有图片 从网络中下载
-                if (bitmap == null) {
-                    System.out.println("开始下载");
-                    bitmap = downloadImage(url);
-                    System.out.println("下载结束");
-                }
+                System.out.println("开始下载");
+                Bitmap bitmap = downloadImage(url);
+                System.out.println("下载结束");
                 //没有下载到图片
                 if (bitmap == null) {
                     return;
                 }
                 if (imageView.getTag().equals(url)) {
                     //将图片显示在控件中
-                    updateImageView(imageView,bitmap);
+                    updateImageView(imageView, bitmap);
                 }
                 //将图片塞进缓存
                 mImageCache.put(url, bitmap);
@@ -82,8 +67,9 @@ public class XImageLoader {
 
     /**
      * 更新图片至容器中
+     *
      * @param imageView 图片容器
-     * @param bitmap 图片
+     * @param bitmap    图片
      */
     private void updateImageView(final ImageView imageView, final Bitmap bitmap) {
         mHandler.post(new Runnable() {
@@ -96,6 +82,7 @@ public class XImageLoader {
 
     /**
      * 下载图片
+     *
      * @param imageUrl 图片地址
      * @return
      */
